@@ -1,6 +1,5 @@
 package demo;
 
-import demo.ext.eureka.Eureka;
 import demo.ext.item.ItemInfo;
 import demo.ext.item.ItemService;
 import demo.ext.postgres.Postgres;
@@ -22,14 +21,11 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.isEmptyString;
 import static org.hamcrest.core.IsNot.not;
 
-@Eureka
 @Redis
 @Postgres
 @UserService
 @ItemService
 class EndToEndTest {
-    private static final ObjectMapper mapper = new ObjectMapper();
-    private final RestTemplate restTemplate = new RestTemplate();
 
     @Test
     void testFlow(UserInfo userInfo, ItemInfo itemInfo) {
@@ -46,7 +42,7 @@ class EndToEndTest {
         assertThat(itemCreateResponse.getId(), not(isEmptyString()));
 
         //get item with user info embedded
-        ItemResponse itemResponse = restTemplate.getForEntity(itemUrl + "/" + itemCreateResponse.getId(), ItemResponse.class).getBody();
+        ItemResponse itemResponse = new RestTemplate().getForEntity(itemUrl + "/" + itemCreateResponse.getId(), ItemResponse.class).getBody();
         assertThat(itemResponse.getCategory(), equalTo("T-shirt"));
         assertThat(itemResponse.getUser().getName(), equalTo("Nikolay"));
     }
@@ -57,8 +53,8 @@ class EndToEndTest {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 
-        HttpEntity<String> request = new HttpEntity<>(mapper.writeValueAsString(req), headers);
-        ResponseEntity<R> response = restTemplate.postForEntity(url, request, clazz);
+        HttpEntity<String> request = new HttpEntity<>(new ObjectMapper().writeValueAsString(req), headers);
+        ResponseEntity<R> response = new RestTemplate().postForEntity(url, request, clazz);
         return response.getBody();
     }
 

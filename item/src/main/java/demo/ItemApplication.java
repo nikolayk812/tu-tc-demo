@@ -11,9 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -48,6 +46,9 @@ public class ItemApplication {
         @Autowired
         private RedisCommands<String, String> redisCommands;
 
+        @Autowired
+        private UserProperties userProps;
+
         @PostMapping
         @SneakyThrows
         public ItemCreateResponse create(@RequestBody Item request) {
@@ -56,8 +57,10 @@ public class ItemApplication {
             String userJson = redisCommands.get("user:" + request.getUserId());
             if (userJson == null) {
                 //get user from User service
+
+                String url = "http://" + userProps.host + ":" + userProps.getPort();
                 ResponseEntity<User> response = restTemplate.getForEntity(
-                        "http://user-eureka/users/{id}", User.class, request.getUserId());
+                        url + "/users/{id}", User.class, request.getUserId());
 
                 if (response.getStatusCode() != HttpStatus.OK) {
                     throw new IllegalArgumentException("User does not exist " + request.getUserId());
@@ -105,16 +108,16 @@ public class ItemApplication {
         String port;
     }
 
-    @Profile("default")
-    @LoadBalanced
-    @Bean
-    public RestTemplate getRestTemplate() {
-        return new RestTemplate();
+    @Data
+    @Component
+    @ConfigurationProperties(prefix = "user")
+    class UserProperties {
+        String host;
+        String port;
     }
 
-    @Profile("test")
     @Bean
-    public RestTemplate getTestRestTemplate() {
+    public RestTemplate getRestTemplate() {
         return new RestTemplate();
     }
 

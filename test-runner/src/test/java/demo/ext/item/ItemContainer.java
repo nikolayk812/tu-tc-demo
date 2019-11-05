@@ -16,8 +16,9 @@ public class ItemContainer extends GenericContainer<ItemContainer> {
         withNetworkAliases("item-alias");
 
         addEnv("SERVER_PORT", port + "");
-        addEnv("EUREKASERVER_PORT", "8761");
-        addEnv("EUREKASERVER_URI", "http://eureka-alias:8761/eureka/");
+        addEnv("USER_HOST", "user-alias");
+        addEnv("USER_PORT", "8083");
+
         addEnv("REDIS_HOST", "redis-alias");
         addEnv("REDIS_PORT", "6379");
 

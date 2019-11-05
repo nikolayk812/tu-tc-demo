@@ -12,7 +12,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -35,7 +34,6 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @SpringBootTest
 @ContextConfiguration(initializers = {ItemControllerTest.PropertiesInitializer.class})
 @Testcontainers
-@ActiveProfiles("test")
 public class ItemControllerTest {
 
     @Container
@@ -81,7 +79,7 @@ public class ItemControllerTest {
     private void mockUser(String id) {
         User user = new User(id, "Nikolay", "nikolay@testcontainers.org");
         mockServer.expect(ExpectedCount.once(),
-                requestTo(new URI("http://user-eureka/users/" + id)))
+                requestTo(new URI("http://localhost:8083/users/" + id)))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withStatus(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON)

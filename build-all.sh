@@ -7,7 +7,3 @@ cd ..
 cd item
 mvn clean package docker:build -DskipTests
 cd ..
-
-cd eureka
-mvn clean package docker:build -DskipTests
-cd ..

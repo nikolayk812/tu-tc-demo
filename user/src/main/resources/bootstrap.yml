@@ -1,6 +1,0 @@
-spring:
-  application:
-    name: user-eureka
-  profiles:
-    active:
-      default

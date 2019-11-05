@@ -15,8 +15,6 @@ public class UserContainer extends GenericContainer<UserContainer> {
         waitingFor(new HostPortWaitStrategy());
 
         addEnv("SERVER_PORT", port + "");
-        addEnv("EUREKASERVER_PORT", "8761");
-        addEnv("EUREKASERVER_URI", "http://eureka-alias:8761/eureka/");
         addEnv("POSTGRES_URL", "jdbc:postgresql://postgres-alias:5432/users");
         addEnv("POSTGRES_USERNAME", "postgres");
         addEnv("POSTGRES_PASSWORD", "password");
